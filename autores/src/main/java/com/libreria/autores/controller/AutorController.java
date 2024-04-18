@@ -20,8 +20,9 @@ public class AutorController {
     private IAutorService autorServ;
     
     @PostMapping("/crear")
-    public void createAutor(@RequestBody Autor autor) {
+    public @ResponseBody Autor createAutor(@RequestBody Autor autor) {
         autorServ.createAutor(autor);
+        return autor;
     }
     
     @GetMapping("/traer")
