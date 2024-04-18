@@ -1,6 +1,8 @@
 package com.libreria.libros.controller;
 
+import com.libreria.libros.dto.AutorDTO;
 import com.libreria.libros.model.Libro;
+import com.libreria.libros.repository.ILibroClient;
 import com.libreria.libros.service.ILibroService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,21 +21,50 @@ public class LibroController {
     @Autowired
     private ILibroService libroServ;
     
+    @Autowired
+    private ILibroClient libroClient;
+    
+    private List<AutorDTO> listAutores;
+    
     @PostMapping("/crear")
-    public String createLibro(@RequestBody Libro libro) {
+    public @ResponseBody Libro createLibro(@RequestBody Libro libro) {
         libroServ.createLibro(libro);
-        return "Libro creado";
+        
+        Long isbn = libro.getISBN();
+        Libro libroCompleto = this.getLibroByIsbn(isbn);
+        listAutores = this.getAutorInfo(isbn);
+        libroCompleto.setAutores(listAutores);
+        
+        return libroCompleto;
     }
     
+    // Autores viene nulo, consumir el servicio acá también
     @GetMapping("/traer")
     @ResponseBody
     public List<Libro> getLibros() {
-        return libroServ.getLibros();
+        List<Libro> listaLibros = libroServ.getLibros();
+         
+        
+        for(Libro libro : listaLibros ) {
+            listAutores = this.getAutorInfo(libro.getISBN());
+            libro.setAutores(listAutores);
+        }
+        
+        return listaLibros;
     }
     
     @GetMapping("/traerPorIsbn/{isbn}")
     @ResponseBody
     public Libro getLibroByIsbn(@PathVariable Long isbn) {
-        return libroServ.getLibroByIsbn(isbn);
+        Libro libro = libroServ.getLibroByIsbn(isbn);
+        listAutores = this.getAutorInfo(isbn);
+        libro.setAutores(listAutores);
+        return libro;
     }
+    
+    @GetMapping("/traerAutor/{isbn}")
+    public List<AutorDTO> getAutorInfo(@PathVariable("isbn") Long isbn) {
+        return libroClient.getAutorInfo(isbn);
+    }
+    
 }
