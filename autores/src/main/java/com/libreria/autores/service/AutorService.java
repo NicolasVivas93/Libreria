@@ -26,4 +26,9 @@ public class AutorService implements IAutorService {
     public Autor getAutorById(Long id) {
         return autorRepo.findById(id).orElse(null);
     }
+
+    @Override
+    public List<Autor> getAutoresByIsbn(Long isbn) {
+        return autorRepo.findByIsbn(isbn);
+    }
 }

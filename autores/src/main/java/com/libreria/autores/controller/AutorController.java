@@ -36,4 +36,9 @@ public class AutorController {
         return autorServ.getAutorById(idAutor);
     }
     
+    @GetMapping("/traerPorIsbn/{isbn}")
+    public List<Autor> getAutoresByIsbn(@PathVariable Long isbn) {
+        return autorServ.getAutoresByIsbn(isbn);
+    }
+    
 }

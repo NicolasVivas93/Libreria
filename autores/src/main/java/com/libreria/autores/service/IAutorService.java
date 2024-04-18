@@ -9,4 +9,5 @@ public interface IAutorService {
     
     public List<Autor> getAutores();
     public Autor getAutorById(Long id);
+    public List<Autor> getAutoresByIsbn(Long isbn);
 }
